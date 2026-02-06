@@ -27,13 +27,13 @@ A simple API that provides authentic Chinese almanac data in JSON format. Perfec
 
 ```bash
 # Get today's almanac
-curl https://api.fengshui.dev/v1/almanac
+curl https://fengshui-api-5rgh.onrender.com/v1/almanac
 
 # Get almanac for a specific date
-curl https://api.fengshui.dev/v1/almanac/2026-02-14
+curl https://fengshui-api-5rgh.onrender.com/v1/almanac/2026-02-14
 
 # Find auspicious wedding dates
-curl "https://api.fengshui.dev/v1/find?activity=嫁娶&days=30"
+curl "https://fengshui-api-5rgh.onrender.com/v1/find?activity=嫁娶&days=30"
 ```
 
 ## Response Example
