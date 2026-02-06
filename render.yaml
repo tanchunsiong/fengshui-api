@@ -1,0 +1,17 @@
+# Render Blueprint for Fengshui API
+# Deploy: connect repo to Render, it auto-detects this file
+
+services:
+  - type: web
+    name: fengshui-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    healthCheckPath: /api/health
+    autoDeploy: true

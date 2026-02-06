@@ -1,0 +1,23 @@
+{
+  "name": "fengshui-api",
+  "version": "1.0.0",
+  "description": "Chinese Almanac (通胜/黄历) REST API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["fengshui", "almanac", "chinese", "zodiac", "lunar", "calendar", "api"],
+  "author": "Tan Chun Siong",
+  "license": "MIT",
+  "dependencies": {
+    "lunar-typescript": "^1.7.6"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tanchunsiong/fengshui-api"
+  }
+}

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fengshui API — Chinese Almanac Data for Developers</title>
+  <meta name="description" content="Access authentic Chinese almanac (通胜/黄历) data via REST API. Auspicious dates, zodiac info, lunar calendar, and more.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧧</text></svg>">
+  <style>
+    :root {
+      --primary: #dc2626;
+      --primary-dark: #b91c1c;
+      --gold: #f59e0b;
+      --dark: #1a1a1a;
+      --light: #fef3c7;
+      --gray: #6b7280;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 100%);
+      color: #fff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    
+    /* Header */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    
+    nav { display: flex; justify-content: space-between; align-items: center; }
+    
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 30px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    
+    .nav-links a:hover { opacity: 1; }
+    
+    /* Hero */
+    .hero {
+      padding: 100px 0;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--gold) 0%, #fcd34d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero .subtitle {
+      font-size: 1.3rem;
+      color: var(--gray);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    
+    .cta-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+    
+    .btn {
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .btn:hover { transform: translateY(-2px); }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    /* Features */
+    .features {
+      padding: 80px 0;
+      background: rgba(0,0,0,0.2);
+    }
+    
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 60px;
+      color: var(--gold);
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .feature-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+    
+    .feature-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: var(--light);
+    }
+    
+    .feature-card p { color: var(--gray); }
+    
+    /* Code Example */
+    .code-section {
+      padding: 80px 0;
+    }
+    
+    .code-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 40px;
+      color: var(--gold);
+    }
+    
+    .code-block {
+      background: #0d0d0d;
+      border-radius: 12px;
+      padding: 30px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .code-block .comment { color: #6b7280; }
+    .code-block .keyword { color: #f472b6; }
+    .code-block .string { color: #34d399; }
+    .code-block .property { color: #60a5fa; }
+    
+    /* Pricing */
+    .pricing {
+      padding: 80px 0;
+      background: rgba(0,0,0,0.2);
+    }
+    
+    .pricing h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: var(--gold);
+    }
+    
+    .pricing .subtitle {
+      text-align: center;
+      color: var(--gray);
+      margin-bottom: 60px;
+    }
+    
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .pricing-card {
+      background: rgba(255,255,255,0.05);
+      padding: 40px 30px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    
+    .pricing-card.featured {
+      border-color: var(--gold);
+      transform: scale(1.05);
+    }
+    
+    .pricing-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .pricing-card .price {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--gold);
+      margin: 20px 0;
+    }
+    
+    .pricing-card .price span {
+      font-size: 1rem;
+      color: var(--gray);
+    }
+    
+    .pricing-card ul {
+      list-style: none;
+      margin: 30px 0;
+      text-align: left;
+    }
+    
+    .pricing-card li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--gray);
+    }
+    
+    .pricing-card li::before {
+      content: "✓ ";
+      color: var(--gold);
+    }
+    
+    /* Endpoints */
+    .endpoints {
+      padding: 80px 0;
+    }
+    
+    .endpoints h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 60px;
+      color: var(--gold);
+    }
+    
+    .endpoint-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .endpoint {
+      background: rgba(255,255,255,0.03);
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 3px solid var(--primary);
+    }
+    
+    .endpoint code {
+      font-family: monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: var(--gold);
+    }
+    
+    .endpoint .method {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .endpoint .get { background: #059669; color: #fff; }
+    .endpoint .post { background: #2563eb; color: #fff; }
+    
+    .endpoint p { color: var(--gray); margin-top: 10px; }
+    
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      color: var(--gray);
+    }
+    
+    footer a { color: var(--gold); text-decoration: none; }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .nav-links { display: none; }
+      .pricing-card.featured { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo">🧧 Fengshui API</a>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#docs">Docs</a>
+          <a href="#pricing">Pricing</a>
+          <a href="https://github.com/tanchunsiong/fengshui-cli">GitHub</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Chinese Almanac API</h1>
+      <p class="subtitle">
+        Access authentic 通胜/黄历 data via REST API. Auspicious dates, zodiac signs, 
+        lunar calendar, and traditional Chinese fortune-telling — all in JSON.
+      </p>
+      <div class="cta-buttons">
+        <a href="#docs" class="btn btn-primary">Get Started Free</a>
+        <a href="#pricing" class="btn btn-secondary">View Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="container">
+      <h2>What You Get</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">📅</div>
+          <h3>Daily Almanac</h3>
+          <p>Complete daily readings including auspicious activities (宜), inauspicious activities (忌), clash signs, and lucky directions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🐲</div>
+          <h3>Chinese Zodiac</h3>
+          <p>Full zodiac data for any date — animal sign, element, personality traits, and compatibility information.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🌙</div>
+          <h3>Lunar Calendar</h3>
+          <p>Accurate lunar date conversion with festivals, solar terms (节气), and traditional timekeeping.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">💍</div>
+          <h3>Auspicious Date Finder</h3>
+          <p>Search for the best dates for weddings, business openings, moving house, and more.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🔮</div>
+          <h3>Ba Zi (八字)</h3>
+          <p>Four Pillars of Destiny data — year, month, day, and hour pillars for fortune analysis.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">⚡</div>
+          <h3>Fast & Reliable</h3>
+          <p>Sub-100ms response times, 99.9% uptime, and comprehensive documentation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="code-section" id="docs">
+    <div class="container">
+      <h2>Simple Integration</h2>
+      <div class="code-block">
+<span class="comment">// Get today's almanac</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">'https://api.fengshui.dev/v1/almanac'</span>);
+<span class="keyword">const</span> almanac = <span class="keyword">await</span> response.json();
+
+console.log(almanac);
+<span class="comment">// {</span>
+<span class="comment">//   "date": "2026-02-07",</span>
+<span class="comment">//   "lunar": "正月初十",</span>
+<span class="comment">//   "zodiac": "马",</span>
+<span class="comment">//   "auspicious": ["嫁娶", "开业", "入宅"],</span>
+<span class="comment">//   "inauspicious": ["安葬", "破土"],</span>
+<span class="comment">//   "clash": "冲鼠煞北",</span>
+<span class="comment">//   "luckyDirection": "东南",</span>
+<span class="comment">//   ...</span>
+<span class="comment">// }</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="endpoints">
+    <div class="container">
+      <h2>API Endpoints</h2>
+      <div class="endpoint-list">
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/v1/almanac</code>
+          <p>Get today's complete almanac data including all traditional elements.</p>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/v1/almanac/{date}</code>
+          <p>Get almanac for a specific date (YYYY-MM-DD format).</p>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/v1/find?activity=嫁娶&days=30</code>
+          <p>Find auspicious dates for a specific activity within a date range.</p>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/v1/zodiac/{year}</code>
+          <p>Get zodiac animal and element for a specific year.</p>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/v1/lunar/{date}</code>
+          <p>Convert solar date to lunar calendar with festival information.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <h2>Simple Pricing</h2>
+      <p class="subtitle">Start free, scale as you grow</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price">$0<span>/month</span></div>
+          <ul>
+            <li>100 requests/day</li>
+            <li>Basic almanac data</li>
+            <li>Community support</li>
+            <li>Perfect for prototypes</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">Get API Key</a>
+        </div>
+        <div class="pricing-card featured">
+          <h3>Pro</h3>
+          <div class="price">$9<span>/month</span></div>
+          <ul>
+            <li>10,000 requests/day</li>
+            <li>Full data access</li>
+            <li>Priority support</li>
+            <li>Ba Zi calculations</li>
+            <li>Batch endpoints</li>
+          </ul>
+          <a href="#" class="btn btn-primary">Start Free Trial</a>
+        </div>
+        <div class="pricing-card">
+          <h3>Enterprise</h3>
+          <div class="price">Custom</div>
+          <ul>
+            <li>Unlimited requests</li>
+            <li>Custom integrations</li>
+            <li>Dedicated support</li>
+            <li>SLA guarantee</li>
+            <li>On-premise option</li>
+          </ul>
+          <a href="mailto:api@fengshui.dev" class="btn btn-secondary">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>
+        Built with 🧧 by <a href="https://github.com/tanchunsiong">Tan Chun Siong</a> | 
+        <a href="https://github.com/tanchunsiong/fengshui-cli">Open Source</a> |
+        Powered by <a href="https://lunar-typescript.com">lunar-typescript</a>
+      </p>
+      <p style="margin-top: 10px; font-size: 0.9rem;">
+        © 2026 Fengshui API. Traditional wisdom, modern delivery.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
